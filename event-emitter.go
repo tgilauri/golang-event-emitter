@@ -5,36 +5,36 @@ import (
 	"reflect"
 )
 
-type Callback[T any] func(T)
+type Callback[EventDataType any] func(EventDataType)
 
-type EventEmitter[T any] interface {
-	On(string, Callback[T])
-	Off(string, Callback[T])
-	Emit(string, T)
+type EventEmitter[EventDataType any] interface {
+	On(string, Callback[EventDataType])
+	Off(string, Callback[EventDataType])
+	Emit(string, EventDataType)
 	ClearAllListeners()
 }
 
-type SEventEmitter[T any] struct {
-	listeners    map[string]map[uintptr]Callback[T]
+type SEventEmitter[EventDataType any] struct {
+	listeners    map[string]map[uintptr]Callback[EventDataType]
 	maxListeners int
 }
 
-func NewEventEmitter[T any](maxListeners int) EventEmitter[T] {
-	emitter := new(SEventEmitter[T])
+func NewEventEmitter[EventDataType any](maxListeners int) EventEmitter[EventDataType] {
+	emitter := new(SEventEmitter[EventDataType])
 	emitter.maxListeners = 10
-	emitter.listeners = make(map[string]map[uintptr]Callback[T])
+	emitter.listeners = make(map[string]map[uintptr]Callback[EventDataType])
 
 	return emitter
 }
 
-func (this *SEventEmitter[T]) On(eventName string, callback Callback[T]) {
+func (this *SEventEmitter[EventDataType]) On(eventName string, callback Callback[EventDataType]) {
 	ptr := reflect.ValueOf(callback).Pointer()
 
 	fmt.Printf("ON. Pointer to callback is %d\n", ptr)
 
 	isEmpty := len(this.listeners) == 0
 	if _, ok := this.listeners[eventName]; isEmpty || !ok {
-		this.listeners[eventName] = make(map[uintptr]Callback[T])
+		this.listeners[eventName] = make(map[uintptr]Callback[EventDataType])
 	}
 	if len(this.listeners[eventName]) >= this.maxListeners {
 		panic("Can't add more listeners")
@@ -43,7 +43,7 @@ func (this *SEventEmitter[T]) On(eventName string, callback Callback[T]) {
 	this.listeners[eventName][ptr] = callback
 }
 
-func (this *SEventEmitter[T]) Off(eventName string, callback Callback[T]) {
+func (this *SEventEmitter[EventDataType]) Off(eventName string, callback Callback[EventDataType]) {
 	ptr := reflect.ValueOf(callback).Pointer()
 
 	fmt.Printf("OFF. Pointer to callback is %d\n", ptr)
@@ -61,7 +61,7 @@ func (this *SEventEmitter[T]) Off(eventName string, callback Callback[T]) {
 
 }
 
-func (this *SEventEmitter[T]) Emit(eventName string, data T) {
+func (this *SEventEmitter[EventDataType]) Emit(eventName string, data EventDataType) {
 	isEmpty := len(this.listeners) == 0
 	if _, ok := this.listeners[eventName]; isEmpty || !ok {
 		return
@@ -72,10 +72,10 @@ func (this *SEventEmitter[T]) Emit(eventName string, data T) {
 	}
 }
 
-func (this *SEventEmitter[T]) ClearAllListeners() {
+func (this *SEventEmitter[EventDataType]) ClearAllListeners() {
 	if len(this.listeners) == 0 {
 		return
 	}
 
-	this.listeners = make(map[string]map[uintptr]Callback[T])
+	this.listeners = make(map[string]map[uintptr]Callback[EventDataType])
 }
