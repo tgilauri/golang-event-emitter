@@ -23,7 +23,7 @@ func main() {
 To add event listener for specific event
 
 ```golang
-eventListener.On(event string, cb Callback[T])
+eventListener.On("eventName", callback)
 ```
 
 ### Remove event listener
@@ -31,5 +31,15 @@ eventListener.On(event string, cb Callback[T])
 To add event listener for specific event
 
 ```golang
-eventListener.Off(event string, cb Callback[T])
+eventListener.Off("eventName", callback)
+```
+
+### Trigger event
+
+To add event listener for specific event
+
+```golang
+eventListener.On("eventName", callback)
+
+eventListener.Emit("eventName", data) // callback will be called on this event
 ```
