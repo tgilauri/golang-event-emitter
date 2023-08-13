@@ -79,3 +79,29 @@ func TestEmitterShouldRunListenersWithDifferentEventTypes(t *testing.T) {
 
 	assert.Equal(t, 2, callCounter, "Callback should be called 2 times")
 }
+
+func TestEmitterShouldRaiseErrorInCaseMoreListenersAdded(t *testing.T) {
+	emitter := NewEventEmitter[any](1)
+	callCounter := 0
+	var maxAmountListenersError string
+
+	defer func() {
+		if err := recover(); err != nil {
+			maxAmountListenersError = err.(string)
+		}
+		assert.NotEmpty(t, maxAmountListenersError, "Should raise error")
+	}()
+
+	cb := func(event any) {
+		fmt.Println(event)
+		callCounter += 1
+	}
+
+	cb2 := func(event any) {
+		fmt.Println(event)
+		callCounter += 1
+	}
+
+	emitter.On("event", cb)
+	emitter.On("event", cb2)
+}

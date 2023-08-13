@@ -21,7 +21,7 @@ type SEventEmitter[EventDataType any] struct {
 
 func NewEventEmitter[EventDataType any](maxListeners int) EventEmitter[EventDataType] {
 	emitter := new(SEventEmitter[EventDataType])
-	emitter.maxListeners = 10
+	emitter.maxListeners = maxListeners
 	emitter.listeners = make(map[string]map[uintptr]Callback[EventDataType])
 
 	return emitter
