@@ -9,7 +9,7 @@ ${BIN}: ${SRC}
 	go build -o $@ ./cmd/gowebdav
 
 test:
-	go test -modfile=go_test.mod -v -short -cover ./...
+	go test -modfile=go.mod -v -short -cover ./...
 
 
 .PHONY: all cmd clean test api check
