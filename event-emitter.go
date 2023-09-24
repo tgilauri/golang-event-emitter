@@ -10,6 +10,7 @@ type Callback[EventDataType any] func(EventDataType)
 type EventEmitter[EventDataType any] interface {
 	On(string, Callback[EventDataType])
 	Off(string, Callback[EventDataType])
+	Has(string) bool
 	Emit(string, EventDataType)
 	ClearAllListeners()
 }
@@ -58,7 +59,11 @@ func (this *SEventEmitter[EventDataType]) Off(eventName string, callback Callbac
 	}
 
 	delete(this.listeners[eventName], ptr)
+}
 
+func (this *SEventEmitter[EventDataType]) Has(eventName string) bool {
+	listeners, ok := this.listeners[eventName]
+	return ok && len(listeners) > 0
 }
 
 func (this *SEventEmitter[EventDataType]) Emit(eventName string, data EventDataType) {

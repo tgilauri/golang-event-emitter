@@ -105,3 +105,16 @@ func TestEmitterShouldRaiseErrorInCaseMoreListenersAdded(t *testing.T) {
 	emitter.On("event", cb)
 	emitter.On("event", cb2)
 }
+
+func TestShouldReturnTrueIfHasListeners(t *testing.T) {
+	emitter := NewEventEmitter[any](1)
+	emitter.On("test-event", func(event any) {})
+
+	assert.True(t, emitter.Has("test-event"), "Should return true")
+}
+
+func TestShouldReturnFalseIfHasNoListeners(t *testing.T) {
+	emitter := NewEventEmitter[any](1)
+
+	assert.False(t, emitter.Has("test-event"), "Should return false")
+}
